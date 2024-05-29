@@ -15,14 +15,10 @@
     <description>poc-springwebflux-kotlin-server</description>
     <properties>
         <java.version>21</java.version>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
@@ -34,6 +30,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->

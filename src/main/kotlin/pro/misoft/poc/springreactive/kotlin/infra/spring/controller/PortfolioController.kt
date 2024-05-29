@@ -56,10 +56,13 @@ class PortfolioController(private val portfolioUseCases: PortfolioUseCases) {
         )
     }
 
-    private fun newPortfolioItem(balance: Double, itemCurrency: CurrencyUnit, refCurrency: String) = PortfolioItem(
-        IdGenerator.uniqueNumber(), AccountType.CRYPTO, Money.of(BigDecimal.valueOf(balance), itemCurrency),
-        Money.of(
-            BigDecimal(balance * RATES[itemCurrency.currencyCode + refCurrency]!!), refCurrency
+    private fun newPortfolioItem(balance: Double, itemCurrency: CurrencyUnit, refCurrency: String): PortfolioItem {
+        val rate = RATES[itemCurrency.currencyCode + refCurrency] ?: error("Exchange rate is not stubbed for $itemCurrency to $refCurrency")
+        return PortfolioItem(
+            IdGenerator.uniqueNumber(), AccountType.CRYPTO, Money.of(BigDecimal.valueOf(balance), itemCurrency),
+            Money.of(
+                BigDecimal(balance * rate), refCurrency
+            )
         )
-    )
+    }
 }

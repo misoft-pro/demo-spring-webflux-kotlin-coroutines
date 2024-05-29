@@ -1,7 +1,5 @@
 package pro.misoft.poc.springreactive.kotlin.business.model.portfolio
 
-import pro.misoft.poc.springreactive.kotlin.business.model.account.AccountMother.newAccount
-import pro.misoft.poc.springreactive.kotlin.business.model.market.PriceService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -10,7 +8,8 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.javamoney.moneta.Money
 import org.junit.jupiter.api.Test
-import pro.misoft.poc.springreactive.kotlin.business.model.portfolio.Portfolio
+import pro.misoft.poc.springreactive.kotlin.business.model.account.AccountMother.newAccount
+import pro.misoft.poc.springreactive.kotlin.business.model.market.PriceService
 import java.math.BigDecimal
 
 private const val CHF = "CHF"
@@ -49,6 +48,6 @@ class PortfolioTest {
 object TestPriceService : PriceService {
     override suspend fun quote(fromCurrency: String, toCurrency: String): BigDecimal {
         delay(DELAY_MS)
-        return RATES[fromCurrency]!!
+        return RATES[fromCurrency] ?: error("Rate is not configured in test for currency: $fromCurrency")
     }
 }

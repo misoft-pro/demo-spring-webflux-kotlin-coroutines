@@ -1,14 +1,14 @@
 package pro.misoft.poc.springreactive.kotlin.infra.spring.errorhandling
 
 
-import pro.misoft.poc.springreactive.kotlin.business.model.common.BusinessException
-import pro.misoft.poc.springreactive.kotlin.infra.spring.filter.LocaleThreadLocalAccessor
 import org.slf4j.MDC
 import org.springframework.context.support.AbstractResourceBasedMessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import pro.misoft.poc.springreactive.kotlin.business.model.common.BusinessException
+import pro.misoft.poc.springreactive.kotlin.infra.spring.filter.LocaleThreadLocalAccessor
 
 @Component
 class ApiErrorFactory(private val msgSource: AbstractResourceBasedMessageSource) {
@@ -19,7 +19,7 @@ class ApiErrorFactory(private val msgSource: AbstractResourceBasedMessageSource)
 
         val userLocale = LocaleThreadLocalAccessor.getValue()
         val message = msgSource.getMessage(errorKeys.i18nKey, args, ex.message, userLocale)
-        return ApiError(errorKeys.httpStatus, errorKeys.internalCode, message!!)
+        return ApiError(errorKeys.httpStatus, errorKeys.internalCode, message ?: error("Error message is not specified"))
     }
 
     fun error(ex: MethodArgumentNotValidException): ApiError {

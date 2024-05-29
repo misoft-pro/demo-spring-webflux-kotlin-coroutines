@@ -22,9 +22,9 @@ currency (USD, EUR, GBP, CHF) selected by user during onboarding".
 
 ## Tech stack:
 
-- [ ] [Kotlin](https://kotlinlang.org/docs/getting-started.html#install-kotlin)
+- [ ] [Kotlin 2.0.0](https://kotlinlang.org/docs/getting-started.html#install-kotlin)
   and [coroutines](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/)
-- [ ] [Spring Boot WebFlux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
+- [ ] [Spring Boot WebFlux 3.2.5](https://docs.spring.io/spring-framework/reference/web/webflux.html)
 - [ ] [Kotlin Coroutines Reactor](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-reactor/) (see
   also [Spring coroutines guide](https://docs.spring.io/spring-framework/reference/languages/kotlin/coroutines.html) on
   how Reactive translates to Coroutines).

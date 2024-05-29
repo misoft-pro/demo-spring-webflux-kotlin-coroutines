@@ -15,7 +15,6 @@ object CurrencySymbols {
         if (customSymbols.containsKey(currencyCode)) {
             return customSymbols[currencyCode]!!
         }
-        customSymbols
         val currency = Currency.getInstance(currencyCode)
         return currency.getSymbol(locale)
     }
