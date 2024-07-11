@@ -78,7 +78,18 @@ class PortfolioControllerSystemTest : AbstractSystemTest() {
         )
 
         val marketValueFormatted =
-            given().`when`().request(Method.GET, "/v1/portfolio?currency=$refCurrency")
+            given().`when`()
+                .headers(
+                    mapOf(
+                        "X-Trace-Id" to "490aeb1c01cdfbe34b2898aa373c1e50",
+                        "X-B3-TraceId" to "490aeb1c01cdfbe34b2898aa373c1e50",
+                        "trace-id" to "490aeb1c01cdfbe34b2898aa373c1e50",
+                        "X-Span-Id" to "b8899e74d55dc055",
+                        "X-B3-SpanId" to "b8899e74d55dc055",
+                        "parent-id" to "b8899e74d55dc055",
+                    )
+                )
+                .request(Method.GET, "/v1/portfolio?currency=$refCurrency")
                 .then()
                 .assertThat()
                 .statusCode(200)

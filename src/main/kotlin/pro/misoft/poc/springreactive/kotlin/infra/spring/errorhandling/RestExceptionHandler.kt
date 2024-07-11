@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.*
+import org.springframework.http.server.reactive.observation.ServerRequestObservationContext
 import org.springframework.lang.Nullable
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -21,8 +22,10 @@ class RestExceptionHandler(private val errorFactory: ApiErrorFactory) : Response
 
     @ExceptionHandler(value = [ConstraintViolationException::class])
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleConstraintViolationException(ex: ConstraintViolationException): Mono<ResponseEntity<ApiError>> {
+    fun handleConstraintViolationException(ex: ConstraintViolationException, exchange: ServerWebExchange): Mono<ResponseEntity<ApiError>> {
         log.debug(MSG_TEMPLATE, ex)
+        ServerRequestObservationContext.findCurrent(exchange.attributes)
+            .ifPresent { context -> context.setError(ex) }
         return Mono.just(
             ResponseEntity.badRequest().header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(errorFactory.error(ex))
@@ -33,6 +36,9 @@ class RestExceptionHandler(private val errorFactory: ApiErrorFactory) : Response
     fun handleExceptions(ex: Exception, exchange: ServerWebExchange): Mono<ResponseEntity<ApiError>> {
         log.info(MSG_TEMPLATE, ex)
         val apiError: ApiError = errorFactory.error(ex)
+        ServerRequestObservationContext.findCurrent(exchange.attributes)
+            .ifPresent { context -> context.setError(ex) }
+
         return Mono.just(ResponseEntity<ApiError>(apiError, HttpStatus.valueOf(apiError.httpStatus)))
     }
 

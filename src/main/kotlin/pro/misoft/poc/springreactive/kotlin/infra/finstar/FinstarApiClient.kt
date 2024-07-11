@@ -1,5 +1,6 @@
 package pro.misoft.poc.springreactive.kotlin.infra.finstar
 
+import io.micrometer.tracing.Tracer
 import kotlinx.coroutines.reactor.awaitSingle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -8,11 +9,20 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class FinstarApiClient(webClientBuilder: WebClient.Builder, @Value("\${finstar.baseurl}") finstarBaseUrl: String) {
+class FinstarApiClient(tracer: Tracer, webClientBuilder: WebClient.Builder, @Value("\${finstar.baseurl}") finstarBaseUrl: String) {
 
     private val log: Logger = LoggerFactory.getLogger(FinstarApiClient::class.java)
 
-    private val client = webClientBuilder.baseUrl(finstarBaseUrl).build()
+    private val client = webClientBuilder
+        .baseUrl(finstarBaseUrl)
+//        .filter { request, next ->
+//            val traceId = tracer.currentSpan()?.context()?.traceId() ?: "no-trace"
+//            val newRequest = ClientRequest.from(request)
+//                .header("X-Trace-Id", traceId)
+//                .build()
+//            next.exchange(newRequest)
+//        }
+        .build()
 
     suspend fun getAllAccounts(userId: String): List<FsAccount> {
         log.info("Fetching accounts for userId: $userId")
