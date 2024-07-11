@@ -1,4 +1,4 @@
-package pro.misoft.poc.springreactive.kotlin.infra.spring.config
+package pro.misoft.poc.springreactive.kotlin.infra.spring.tracing
 
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.beans.factory.ObjectProvider

@@ -81,6 +81,11 @@ Log record example with traceId printed right after log level `INFO`:
 
 ## Tracing
 
+### Export to Azure Insights
+
+- https://github.com/Azure/azure-sdk-for-java/tree/azure-monitor-opentelemetry-exporter_1.0.0-beta.25
+- OTLP Collector
+
 Distributed `traceId` is attached to every incoming request and automatically propagated to downstream threads and
 requests.
 Downstream treads/coroutines can access it through implicitly propagated context implemented by `micrometer-tracing`

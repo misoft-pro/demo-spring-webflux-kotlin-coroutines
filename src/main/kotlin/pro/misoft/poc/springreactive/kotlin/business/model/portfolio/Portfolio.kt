@@ -1,14 +1,14 @@
 package pro.misoft.poc.springreactive.kotlin.business.model.portfolio
 
-import pro.misoft.poc.springreactive.kotlin.business.model.account.Account
-import pro.misoft.poc.springreactive.kotlin.business.model.account.AccountType
-import pro.misoft.poc.springreactive.kotlin.business.model.market.PriceService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.javamoney.moneta.Money
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import pro.misoft.poc.springreactive.kotlin.business.model.account.Account
+import pro.misoft.poc.springreactive.kotlin.business.model.account.AccountType
+import pro.misoft.poc.springreactive.kotlin.business.model.market.PriceService
 import javax.money.Monetary
 import javax.money.MonetaryAmount
 
@@ -17,6 +17,7 @@ class Portfolio(private val accounts: List<Account>) {
     private val log: Logger = LoggerFactory.getLogger(Portfolio::class.java)
 
     suspend fun allValuation(refCurrency: String, priceService: PriceService): Valuation = coroutineScope {
+
         Valuation(
             refCurrency,
             accounts.map { a ->
@@ -27,6 +28,7 @@ class Portfolio(private val accounts: List<Account>) {
             }.awaitAll()
         )
     }
+
 
     private suspend fun newPortfolioItem(
         account: Account,

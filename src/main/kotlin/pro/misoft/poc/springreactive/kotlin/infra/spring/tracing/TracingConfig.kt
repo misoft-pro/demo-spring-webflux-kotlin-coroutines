@@ -3,6 +3,8 @@ package pro.misoft.poc.springreactive.kotlin.infra.spring.tracing
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationPredicate
+import io.micrometer.observation.ObservationRegistry
+import io.micrometer.observation.aop.ObservedAspect
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
 import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator
@@ -26,28 +28,10 @@ private const val X_SPAN_ID = "X-B3-SpanId"
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 class TracingConfig {
 
-//    @Bean
-//    fun webClientCustomizer(tracer: Tracer, propagator: Propagator): WebClientCustomizer {
-//        return WebClientCustomizer { it.filter(addTracingHeadersToDownstream(tracer, propagator)) }
-//    }
-//
-//    private fun addTracingHeadersToDownstream(tracer: Tracer, propagator: Propagator): ExchangeFilterFunction {
-//        return ExchangeFilterFunction.ofRequestProcessor { clientRequest ->
-//            val span = tracer.currentSpan()!!
-//            val newRequest = ClientRequest.from(clientRequest).build()
-//            propagator.inject(span.context(), newRequest) { carrier, key, value ->
-//                carrier!!.headers().add(key, value)
-//            }
-//            Mono.just(newRequest)
-//        }
-//    }
-
-//    @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
-//    fun tracingFilter(tracer: Tracer, propagator: Propagator): WebFilter {
-//
-//        return TracingWebFilter(tracer, propagator)
-//    }
+    @Bean
+    fun observedAspect(observationRegistry: ObservationRegistry): ObservedAspect {
+        return ObservedAspect(observationRegistry)
+    }
 
     @Bean
     fun contextW3Propagator(): W3CBaggagePropagator {
@@ -117,36 +101,19 @@ class TracingConfig {
         }
     }
 
-
-//    class TracingWebFilter(private val tracer: Tracer, private val propagator: Propagator) : WebFilter {
-//
-//        override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
-//            val headers = exchange.request.headers
-//            val traceId = headers.getFirst("X-Trace-Id")
-//            val parentSpanId = headers.getFirst("X-Parent-Span-ID")
-//            val newContext: Any = if (traceId != null && parentSpanId != null) {
-//                val traceContext = propagator.extract(traceId) { carrier, key -> headers.getFirst(key) }
-//                traceContext
-//            } else {
-//                tracer.currentSpan()!!.context()
-//            }
-//
-//            val span = tracer.nextSpan(newContext).name("incoming_http_request").start()
-//            exchange.response.headers.add(X_TRACE_ID, span.context().traceId())
-//            return chain.filter(exchange)
-//                .doOnTerminate { span.end() }
-//        }
+    //    @Bean
+//    fun webClientCustomizer(tracer: Tracer, propagator: Propagator): WebClientCustomizer {
+//        return WebClientCustomizer { it.filter(addTracingHeadersToDownstream(tracer, propagator)) }
 //    }
-
 //
-//    private fun addTraceIdFilterFunction(tracer: Tracer): ExchangeFilterFunction {
+//    private fun addTracingHeadersToDownstream(tracer: Tracer, propagator: Propagator): ExchangeFilterFunction {
 //        return ExchangeFilterFunction.ofRequestProcessor { clientRequest ->
-//            val traceId = tracer.currentSpan()?.context()?.traceId() ?: "no-trace"
-//            val newRequest = ClientRequest.from(clientRequest)
-//                .header(X_TRACE_ID, traceId)
-//                .build()
+//            val span = tracer.currentSpan()!!
+//            val newRequest = ClientRequest.from(clientRequest).build()
+//            propagator.inject(span.context(), newRequest) { carrier, key, value ->
+//                carrier!!.headers().add(key, value)
+//            }
 //            Mono.just(newRequest)
 //        }
 //    }
-
 }
