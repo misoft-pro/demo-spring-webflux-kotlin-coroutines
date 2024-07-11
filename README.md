@@ -81,10 +81,39 @@ Log record example with traceId printed right after log level `INFO`:
 
 ## Tracing
 
-### Export to Azure Insights
+## Code instrumentation and trace reporting
 
-- https://github.com/Azure/azure-sdk-for-java/tree/azure-monitor-opentelemetry-exporter_1.0.0-beta.25
-- OTLP Collector
+1. **Spring Cloud Sleuth is deprecated, everything is moving to Micrometer Tracing**
+2. **Use Micrometer Tracing library**: It provides a simple facade for the most popular tracer libraries, letting you instrument your JVM-based application code without vendor lock-in.
+
+   Micrometer officially supports Tracers:
+    1. OpenZipkin Brave
+    2. OpenTelemetry
+
+   Micrometer officially supports Reporters:
+    1. Tanzu Observability by Wavefront
+    2. OpenZipkin Zipkin
+
+   [Azure Exporter Beta version](https://learn.microsoft.com/en-us/java/api/overview/azure/monitor-opentelemetry-exporter-readme?view=azure-java-preview), [source code](https://github.com/Azure/azure-sdk-for-java/tree/azure-monitor-opentelemetry-exporter_1.0.0-beta.25)
+
+3. **Use directly OpenTelemetry libraries**:
+    - [OpenTelemetry Spring Boot Starter](https://opentelemetry.io/docs/zero-code/java/spring-boot-starter/)
+    - [OpenTelemetry Java Agent](https://opentelemetry.io/docs/zero-code/java/agent/)
+
+   Direct Java Exporters (https://opentelemetry.io/docs/languages/java/exporters/)
+    - Prometheus
+    - Zipkin JSON Exporter, Jaeger
+    - OTLP Exporter (POC use [GrpcExporter](https://github.com/open-telemetry/opentelemetry-java/blob/main/exporters/otlp/all/src/main/java/io/opentelemetry/exporter/otlp/trace/OtlpGrpcSpanExporter.java) / HttpExporter to send data to OTEL Colletor)
+    - GCP Exporter (by Google)
+    - Azure Monitor (Beta version)
+   
+   When data is exported to [OTLP Collector](https://opentelemetry.io/docs/collector/installation/), the collector can report traces to the following [backends](https://opentelemetry.io/ecosystem/registry/?component=exporter&language=collector).
+
+**Notes**: 
+1. Azure Monitor OpenTelemetry Guide (https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable?tabs=java)
+2. Zipkin backend supports OTLP protocol.
+
+## Trace Propagation between services
 
 Distributed `traceId` is attached to every incoming request and automatically propagated to downstream threads and
 requests.
@@ -166,5 +195,11 @@ data class ApiError(
 ## API usage
 
 ```bash
-curl http://localhost:8080/api/v1/portfolio?currency=USD
+curl -v http://localhost:8080/api/v1/portfolio?currency=EUR
+```
+
+```bash
+curl -v http://localhost:8080/api/v1/portfolio?currency=EUR \
+-H "X-B3-TraceId: 490aeb1c01cdfbe34b2898aa373c1e55" \
+-H "X-B3-SpanId: b8899e74d55dc066"
 ```

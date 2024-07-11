@@ -2,9 +2,12 @@ version: "3"
 services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
-    command: ["--config=/Users/admin/git/my-projects/demo-spring-webflux-kotlin-coroutines/docker-compose/otel-collector-config.yaml"]
+    command: ["--config=/etc/otel/otel-collector-config.yaml"]
     volumes:
-      - ./otel-collector-config.yaml:/Users/admin/git/my-projects/demo-spring-webflux-kotlin-coroutines/docker-compose/otel-collector-config.yaml
+      - ./otel-collector-config.yaml:/etc/otel/otel-collector-config.yaml
     ports:
       - "4317:4317"
+      - "4318:4318"
       - "55681:55681"
+    environment:
+      LOG_LEVEL: "DEBUG"

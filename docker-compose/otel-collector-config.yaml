@@ -2,14 +2,33 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: 0.0.0.0:4317
       http:
+        endpoint: 0.0.0.0:4318
 
 exporters:
+  debug:
+    verbosity: detailed
   azuremonitor:
-    instrumentation_key: "<Instrumentation_Key>"
+    instrumentation_key: "84b27948-72cc-4337-8251-a641a4ed9cf0"
+
+processors:
+  batch:
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [batch]
       exporters: [azuremonitor]
+    metrics:
+      receivers: [otlp]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [azuremonitor]
+
+  telemetry:
+    logs:
+      level: "DEBUG"
