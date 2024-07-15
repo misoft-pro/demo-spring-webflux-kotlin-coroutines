@@ -5,9 +5,11 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock
-import io.restassured.RestAssured.given
-import io.restassured.http.Method
-import org.assertj.core.api.Assertions.assertThat
+import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Given
+import io.restassured.module.kotlin.extensions.Then
+import io.restassured.module.kotlin.extensions.When
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import pro.misoft.poc.springreactive.kotlin.business.model.account.AccountMother
@@ -77,22 +79,20 @@ class PortfolioControllerSystemTest : AbstractSystemTest() {
                 )
         )
 
-        val marketValueFormatted =
-            given().`when`()
-                .headers(
-                    mapOf(
-                        "X-B3-TraceId" to "490aeb1c01cdfbe34b2898aa373c1e55",
-                        "X-B3-SpanId" to "b8899e74d55dc066",
-                    )
+        Given {
+            contentType(ContentType.JSON)
+            headers(
+                mapOf(
+                    "X-B3-TraceId" to "490aeb1c01cdfbe34b2898aa373c1e55",
+                    "X-B3-SpanId" to "b8899e74d55dc066",
                 )
-                .request(Method.GET, "/v1/portfolio?currency=$refCurrency")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .extract()
-                .jsonPath().getString("totalMarketValue.formatted")
-
-        assertThat(marketValueFormatted).isEqualTo("€ 600,000.00")
+            )
+        } When {
+            get("/v1/portfolio?currency=$refCurrency")
+        } Then {
+            statusCode(200)
+            body("totalMarketValue.formatted", Matchers.equalTo("€ 600,000.00"))
+        }
 
         accountWiremock.verify(getRequestedFor(getAccountsUrl))
         accountWiremock.verify(getRequestedFor(getBalanceUrl))
